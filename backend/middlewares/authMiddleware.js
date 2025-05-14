@@ -3,13 +3,14 @@ const { verifyAccessToken } = require("../authentication/user_auth");
 const authMiddleware = (req, res, next) => {
   // Check for token in cookies first (preferred method)
   const accessToken = req.cookies.accessToken;
+  const refreshToken = req.cookies.refreshToken;
 
   // Fallback to Authorization header if cookie not present
   const authHeader = req.headers.authorization;
   const headerToken = authHeader ? authHeader.split(" ")[1] : null;
 
-  // Use cookie token or header token
-  const token = accessToken || headerToken;
+  // Use cookie token or header token, with refreshToken as fallback
+  const token = accessToken || headerToken || refreshToken;
 
   if (!token) {
     return res.status(401).json({ error: "Access denied. No token provided" });
